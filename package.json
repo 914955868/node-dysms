@@ -1,0 +1,27 @@
+{
+  "name": "dysms",
+  "version": "1.0.0",
+  "description": "Alidayu SMS (dysmsapi.aliyuncs.com) for Node.js witout async function. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourtion/node-dysms.git"
+  },
+  "keywords": [
+    "Alidayu",
+    "dysms",
+    "阿里大于",
+    "阿里大鱼"
+  ],
+  "author": "Yourtion Guo <yourtion@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourtion/node-dysms/issues"
+  },
+  "homepage": "https://github.com/yourtion/node-dysms#readme",
+  "author": "Yourtion Guo <yourtion@gmail.com>",
+  "license": "MIT"
+}
