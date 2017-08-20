@@ -12,6 +12,10 @@ const assert = require('assert');
 const crypto = require('crypto');
 const request = require('request');
 
+/**
+ * 创建一个兼容 callback 的 Promise
+ * @return {Function}
+ */
 function createPromiseCallback() {
   const callback = (err, ret) => {
     if (err) {
@@ -27,11 +31,16 @@ function createPromiseCallback() {
   return callback;
 }
 
+/**
+ * 阿里云短信服务 - 阿里大于
+ */
 class Alidayu {
 
   /**
    * 构造函数
-   * @param {Object} options 
+   * @param {Object} options - 配置项
+   * @param {String} options.AccessKeyId - 秘钥 AccessKeyId
+   * @param {String} options.AccessKeySecret - 秘钥A ccessKeySecret
    */
   constructor(options) {
     assert(typeof options.AccessKeyId === 'string', '请配置 AccessKeyId');
@@ -50,8 +59,8 @@ class Alidayu {
 
   /**
    * 短信接口签名算法函数
-   * @param {Object} param 发送短信的参数
-   * @param {String} secret 阿里短信服务所用的密钥值
+   * @param {Object} param - 发送短信的参数
+   * @param {String} secret - 阿里短信服务所用的密钥值
    * @return {String}
    */
   _signParameters(param, secret) {
@@ -66,19 +75,19 @@ class Alidayu {
 
   /**
      * 阿里云短信发送接口
-     * @param {Object} data 发送短信的参数，请查看阿里云短信模板中的变量做一下调整，格式如：{code:"1234", phone:"13062706593"}
-     * @param {Function} callback 发送短信后的回调函数
+     * @param {Object} params - 发送短信的参数
+     * @param {Function} callback - 回调函数
      */
-  _sendMessage(data, callback) {
-    const param = Object.assign(data, this.options, { SignatureNonce: '' + Math.random(), Timestamp: new Date().toISOString() });
-    delete param.AccessKeySecret;
-    param.Signature = this._signParameters(param, this.options.AccessKeySecret);
+  _sendMessage(params, callback) {
+    const _param = Object.assign(params, this.options, { SignatureNonce: '' + Math.random(), Timestamp: new Date().toISOString() });
+    delete _param.AccessKeySecret;
+    _param.Signature = this._signParameters(_param, this.options.AccessKeySecret);
     request.post({
       url: 'http://dysmsapi.aliyuncs.com/',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      form: param,
+      form: _param,
     }, function (err, response, data) {
       callback(err, data);
     });
@@ -86,13 +95,23 @@ class Alidayu {
 
   /**
    * 发送短信
-   * @param {Object} opt 
-   * @param {Function} callback
+   * @param {Object} option - 发送短信配置
+   * @param {Number} option.phone - 手机号
+   * @param {String} option.sign - 签名
+   * @param {String} option.template - 模版
+   * @param {Object} option.params - 模版参数
+   * @param {Function} callback - 回调函数
    * @return {Promise} 
    */
-  sendRegistSms(opt, callback) {
+  sms(option, callback) {
+    const _option = {
+      PhoneNumbers: option.phone,
+      SignName: option.sign,
+      TemplateCode: option.template,
+    };
+    if(option.params) _option.TemplateParam = JSON.stringify(option.params);
     const cb = callback || createPromiseCallback();
-    this._sendMessage(opt, function (err, data) {
+    this._sendMessage(_option, function (err, data) {
       if(err) return cb(err, data);
       const json = JSON.parse(data);
       if(json.Message === 'OK') {

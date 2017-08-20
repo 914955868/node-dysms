@@ -1,7 +1,7 @@
 {
   "name": "dysms",
-  "version": "1.0.0",
-  "description": "Alidayu SMS (dysmsapi.aliyuncs.com) for Node.js witout async function. ",
+  "version": "1.1.0",
+  "description": "Alidayu SMS (dysmsapi.aliyuncs.com) for Node.js witout async function.",
   "main": "index.js",
   "scripts": {
     "lint": "eslint *.js --fix",
