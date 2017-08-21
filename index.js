@@ -46,8 +46,6 @@ class Alidayu {
     assert(typeof options.AccessKeyId === 'string', '请配置 AccessKeyId');
     assert(typeof options.AccessKeySecret === 'string', '请配置  AccessKeySecret');
     this.options = Object.assign({
-      AccessKeyId: '***',
-      AccessKeySecret: '***',
       Format: 'JSON',
       SignatureMethod: 'HMAC-SHA1',
       SignatureVersion: '1.0',
@@ -64,12 +62,12 @@ class Alidayu {
    * @return {String}
    */
   _signParameters(param, secret) {
-    const data = [];
+    
+    const signData = Object.keys(param).sort().map((k) => {
+      return encodeURIComponent(k) + '=' + encodeURIComponent(param[k]);
+    }).join('&');
 
-    for (const key of Object.keys(param).sort()) {
-      data.push(encodeURIComponent(key) + '=' + encodeURIComponent(param[key]));
-    }
-    const StringToSign = `POST&${ encodeURIComponent('/') }&${ encodeURIComponent(data.join('&')) }`;
+    const StringToSign = `POST&%2F&${ encodeURIComponent(signData) }`;
     return crypto.createHmac('sha1', secret + '&').update(new Buffer(StringToSign, 'utf-8')).digest('base64');
   }
 
